@@ -26,27 +26,19 @@ Jawaban:
 2. Buatlah bagan yang berisi request client ke web aplikasi berbasis Django beserta responnya dan jelaskan pada bagan tersebut kaitan antara urls.py, views.py, models.py, dan berkas html.
 
 Jawaban: 
-Bagan Alur Request–Response (Model-View-Template)
+### Bagan Alur Request–Response (Model-View-Template)
 
 ```mermaid
 flowchart TD
-    A[Client Browser] -->|HTTP Request: '/'| B[Django URLs Router]
+    A[Client Browser] -->|HTTP Request /| B[Django URLs Router]
     B --> C[project/goalhub/urls.py]
-    C -->|include 'main.urls'| D[main/urls.py]
-    D -->|path '', show_main| E[main/views.py]
-    E -->|Query data optional| F[(models.py<br/>Product Model)]
+    C -->|include main.urls| D[main/urls.py]
+    D -->|path show_main| E[main/views.py]
+    E -->|Query data optional| F[(models.py)]
     F -->|Return data| E
     E -->|render context| G[main.html Template]
     G -->|Generated HTML| H[HTTP Response]
     H --> A
-    
-    style A fill:#e1f5fe
-    style C fill:#fff3e0
-    style D fill:#fff3e0
-    style E fill:#e8f5e8
-    style F fill:#fce4ec
-    style G fill:#f1f8e9
-    style H fill:#e3f2fd
 
 - **urls.py (project)**: pintu masuk request, delegasi ke url app.
 - **urls.py (app)**: mapping path spesifik -> fungsi view.
