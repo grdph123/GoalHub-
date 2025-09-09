@@ -27,18 +27,9 @@ Jawaban:
 
 Jawaban: 
 ### Bagan Alur Request–Response (Model-View-Template)
+![Django MVT Flow Diagram](https://github.com/user-attachments/assets/79ce0e7c-3bd2-4cfd-9e9a-f6e0d7282b64)
 
-```mermaid
-flowchart TD
-    A[Client Browser] -->|HTTP Request /| B[Django URLs Router]
-    B --> C[project/goalhub/urls.py]
-    C -->|include main.urls| D[main/urls.py]
-    D -->|path show_main| E[main/views.py]
-    E -->|Query data optional| F[(models.py)]
-    F -->|Return data| E
-    E -->|render context| G[main.html Template]
-    G -->|Generated HTML| H[HTTP Response]
-    H --> A
+Referensi: https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Server-side/Django/Introduction#what_does_django_code_look_like)%20-%20[Visual%20Django%20Flow%20Chart](https://www.geeksforgeeks.org/django-project-mvt-structure/
 
 - **urls.py (project)**: pintu masuk request, delegasi ke url app.
 - **urls.py (app)**: mapping path spesifik -> fungsi view.
