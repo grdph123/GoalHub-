@@ -34,7 +34,7 @@ DEBUG = os.getenv("DEBUG", "True") == "True"
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
-    "garuga-dewangga-footballnews.pbp.cs.ui.ac.id"
+    "garuga-dewangga-goalhub.pbp.cs.ui.ac.id"
 ]
 
 
