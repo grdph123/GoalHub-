@@ -37,6 +37,10 @@ ALLOWED_HOSTS = [
     "garuga-dewangga-goalhub.pbp.cs.ui.ac.id"
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://garuga-dewangga-goalhub.pbp.cs.ui.ac.id",
+    "https://pbp.cs.ui.ac.id",
+]
 
 
 
