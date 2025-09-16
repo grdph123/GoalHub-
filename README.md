@@ -2,7 +2,7 @@ Nama : Garuga Dewangga Putra Handikto
 NPM  : 2406437615
 Kelas: PBP F
 Hobi : Nonton Film
-Jurusan : Ilmu Sistem Informasi Komputer
+Jurusan : Sistem Informasi 
 
 
 Pertanyaan Tugas 2
@@ -66,3 +66,80 @@ Jawaban:
 - Mungkin bisa ditambah cheat-sheet perintah Git dan ringkasan “arah file mana yang diubah” per step dibuat lebih jelas lagi.
 
 Terima Kasih!
+
+
+
+# 📌 Tugas 3 Implementasi Form dan Data Delivery pada Django
+
+## 1. Jelaskan mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?
+Data delivery dibutuhkan agar aplikasi bisa bertukar data antar sistem atau client-server.  
+Contohnya: front-end atau aplikasi pihak ketiga perlu mengakses informasi produk dari server.  
+
+Dengan adanya data delivery (dalam format **JSON/XML**):
+- Data bisa diakses tanpa harus membuka template HTML.
+- Aplikasi jadi fleksibel, scalable, dan mudah diintegrasikan dengan sistem lain.
+
+---
+
+## 2. Menurutmu, mana yang lebih baik antara XML dan JSON? Mengapa JSON lebih populer dibandingkan XML?
+### JSON lebih baik karena:
+- Struktur lebih sederhana & mudah dibaca manusia.
+- Ukuran file lebih kecil → hemat bandwidth.
+- Lebih cepat diproses (langsung kompatibel dengan JavaScript).
+
+### XML masih relevan karena:
+- Mendukung metadata & schema (lebih formal).
+- Banyak dipakai di sistem legacy.
+
+👉 Karena efisiensi & integrasi lebih gampang, **JSON lebih populer** di era API modern.
+
+---
+
+## 3. Jelaskan fungsi dari method is_valid() pada form Django dan mengapa kita membutuhkan method tersebut?
+- `is_valid()` memvalidasi data input form sesuai aturan model  
+  (misalnya panjang field, tipe data, required atau tidak).  
+- Kalau `is_valid()` **True** → data aman disimpan ke database.  
+- Kalau tidak valid → Django otomatis memberi pesan error.  
+
+🔑 Penting untuk mencegah data tidak sesuai/korup masuk ke database.
+
+---
+
+## 4. Mengapa kita membutuhkan csrf_token saat membuat form di Django? Apa yang dapat terjadi jika kita tidak menambahkan csrf_token pada form Django? Bagaimana hal tersebut dapat dimanfaatkan oleh penyerang?
+- `csrf_token` adalah mekanisme keamanan Django untuk mencegah **CSRF (Cross-Site Request Forgery)**.  
+- Tanpa `csrf_token`, form bisa dipalsukan oleh penyerang. Contoh: user sedang login di website kamu, lalu membuka situs jahat. Situs itu bisa mengirim form request ke server kamu seolah-olah dari user tersebut.  
+- Akibatnya, data penting bisa dimodifikasi (misalnya pembelian barang, perubahan password) tanpa sepengetahuan user.  
+
+👉 Dengan `csrf_token`, setiap form punya token unik yang harus cocok dengan token di server. Jika token tidak valid → request ditolak.  
+
+---
+
+## 5. Step-by-Step Implementasi
+1. Buat model `Product` di `models.py` dengan field:
+   - `name`, `price`, `description`, `thumbnail`, `category`, `is_featured`
+2. Jalankan:
+   ```bash
+   python manage.py makemigrations
+   python manage.py migrate
+3. Buat form di forms.py menggunakan ModelForm.
+4. Tambahkan views untuk:
+   - show_main → menampilkan produk
+   - show_xml & show_json → data delivery
+   - show_xml_by_id & show_json_by_id → data delivery by ID
+   - add_product → form input
+   - product_detail → halaman detail produk
+5. Atur URL routing di:
+   - urls.py aplikasi (main/urls.py)
+   - urls.py proyek (project/urls.py)
+6. Buat template HTML:
+   main.html, add_product.html, product_detail.html
+7. Test data delivery di Postman:
+   /xml/, /json/, /xml/<id>/, /json/<id>/
+8. Push ke GitHub & deploy ke PWS agar bisa diakses online.
+
+## 6. Apakah ada feedback untuk asdos di tutorial 2 yang sudah kalian kerjakan?
+Mungkin untuk setiap tutorial bisa lebih diperjelas lagi dengan kata kata yang mudah dipahami.
+
+## 7. Dokumentasi Hasil Screenshot Postman
+Hasil uji coba endpoint dengan Postman bisa diakses melalui link berikut:
+   Google Drive: https://drive.google.com/drive/folders/1bEZnIlkXYcNHrU48cJjMt51m2YhHo8Co?usp=share_link
