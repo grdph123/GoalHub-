@@ -5,6 +5,8 @@ Hobi : Nonton Film
 Jurusan : Sistem Informasi 
 
 
+---
+
 Pertanyaan Tugas 2
 
 1. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
@@ -68,6 +70,7 @@ Jawaban:
 Terima Kasih!
 
 
+---
 
 # 📌 Tugas 3 Implementasi Form dan Data Delivery pada Django
 
@@ -143,3 +146,83 @@ Mungkin untuk setiap tutorial bisa lebih diperjelas lagi dengan kata kata yang m
 ## 7. Dokumentasi Hasil Screenshot Postman
 Hasil uji coba endpoint dengan Postman bisa diakses melalui link berikut:
    Google Drive: https://drive.google.com/drive/folders/1bEZnIlkXYcNHrU48cJjMt51m2YhHo8Co?usp=share_link
+
+
+---
+
+## Tugas 4: Implementasi Autentikasi, Session, dan Cookies pada Django
+
+### 1. Apa itu Django `AuthenticationForm`? Kelebihan dan Kekurangannya
+`AuthenticationForm` adalah form bawaan Django yang digunakan untuk proses login pengguna. Form ini otomatis menyediakan field **username** dan **password**, serta melakukan validasi terhadap data yang dimasukkan, termasuk mengecek apakah user valid dan password sesuai.
+
+**Kelebihan:**
+- Sudah built-in di Django, jadi tidak perlu membuat form login manual.
+- Aman karena otomatis memanfaatkan sistem autentikasi Django.
+- Mudah digunakan dan diintegrasikan dengan view.
+
+**Kekurangan:**
+- Kurang fleksibel jika ingin menambahkan field tambahan (misalnya login pakai email, captcha, dsb).
+- Tampilan default sederhana, perlu dikustomisasi agar sesuai desain aplikasi.
+
+---
+
+### 2. Perbedaan Autentikasi dan Otorisasi + Implementasi Django
+- **Autentikasi (Authentication):** proses verifikasi identitas pengguna. Contoh: login dengan username dan password.
+- **Otorisasi (Authorization):** proses pengecekan hak akses setelah pengguna berhasil login. Contoh: hanya admin yang bisa mengakses halaman dashboard admin.
+
+**Implementasi di Django:**
+- **Autentikasi** dilakukan dengan `authenticate()`, `login()`, dan `AuthenticationForm`.
+- **Otorisasi** dilakukan dengan sistem `permissions` dan `decorator` seperti `@login_required`, `@permission_required`, serta atribut `is_staff`, `is_superuser` pada user.
+
+---
+
+### 3. Kelebihan dan Kekurangan Session & Cookies
+**Session:**
+- *Kelebihan:* Data tersimpan di server, lebih aman; hanya ID session yang dikirim ke browser.
+- *Kekurangan:* Membebani server jika data yang disimpan sangat banyak.
+
+**Cookies:**
+- *Kelebihan:* Disimpan di sisi client, mengurangi beban server.
+- *Kekurangan:* Bisa dimodifikasi oleh user; ukuran terbatas; potensi risiko keamanan jika tidak dienkripsi.
+
+---
+
+### 4. Apakah Cookies Aman Secara Default? Bagaimana Django Menanganinya
+- **Cookies tidak sepenuhnya aman secara default** karena bisa diakses atau dimodifikasi user. Risiko yang perlu diwaspadai antara lain:
+  - **Session hijacking** (cookie dicuri oleh orang lain).
+  - **XSS (Cross-Site Scripting)** untuk mencuri cookie.
+  - **CSRF (Cross-Site Request Forgery)** untuk memanfaatkan session aktif.
+
+**Django menangani keamanan cookies dengan:**
+- Menggunakan `HttpOnly` agar cookie tidak bisa diakses via JavaScript.
+- Mendukung `Secure` flag agar cookie hanya dikirim lewat HTTPS.
+- Menyediakan proteksi CSRF otomatis dengan `{% csrf_token %}`.
+- Menggunakan signing dan hashing untuk data penting.
+
+---
+
+### 5. Step-by-Step Implementasi Checklist
+1. **Setup autentikasi dasar**  
+   - Import `AuthenticationForm`, `login`, `logout` di `views.py`.  
+   - Membuat fungsi `login_user`, `logout_user`, dan `register`.
+
+2. **Membuat halaman login & register**  
+   - Membuat template `login.html` dan `register.html` yang extend `base.html`.  
+   - Menambahkan form bawaan Django (`AuthenticationForm`, `UserCreationForm`).
+
+3. **Mengatur URL routing**  
+   - Menambahkan path untuk `login`, `logout`, dan `register` di `urls.py`.
+
+4. **Menambahkan proteksi login**  
+   - Menggunakan `@login_required` pada view tertentu (misalnya `show_main`, `add_product`, `product_detail`).
+
+5. **Menyimpan informasi session**  
+   - Menambahkan cookie `last_login` setelah user berhasil login.  
+   - Menampilkan `last_login` di halaman utama.
+
+6. **Logout dan hapus session**  
+   - Menghapus session dan `last_login` cookie saat logout.
+
+Dengan langkah-langkah ini, aplikasi mendukung autentikasi pengguna, menyimpan state dengan session dan cookies, serta aman sesuai best practice Django.
+
+---

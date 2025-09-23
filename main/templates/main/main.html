@@ -8,9 +8,20 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            background: #fafafa;
+            color: #333;
         }
         h1 {
             color: #4A148C;
+            margin-bottom: 10px;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px 20px;
+            background: #fff;
+            margin-bottom: 20px;
+            box-shadow: 2px 2px 6px rgba(0,0,0,0.05);
         }
         .product-list {
             display: grid;
@@ -22,49 +33,72 @@
             border: 1px solid #ddd;
             border-radius: 10px;
             padding: 15px;
-            box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+            background: #fff;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         .product-card img {
             max-width: 100%;
             border-radius: 8px;
+            margin-bottom: 10px;
         }
         .product-card h3 {
             margin: 10px 0 5px;
             color: #333;
+            font-size: 18px;
         }
         .product-card p {
             margin: 5px 0;
+            font-size: 14px;
+            line-height: 1.4;
         }
         .btn {
             display: inline-block;
-            margin-top: 10px;
-            padding: 8px 12px;
+            margin: 5px 5px 5px 0;
+            padding: 8px 14px;
             border-radius: 6px;
             background: #4A148C;
             color: white;
             text-decoration: none;
             font-size: 14px;
+            transition: background 0.2s ease;
         }
         .btn:hover {
             background: #6A1B9A;
         }
+        .header-actions {
+            margin-top: 10px;
+        }
+        .logout-btn {
+            background: #c62828;
+        }
+        .logout-btn:hover {
+            background: #e53935;
+        }
     </style>
 </head>
 <body>
-    <h1>Welcome to {{ store_name }}!</h1>
+    <div class="card">
+        <h1>Welcome to {{ store_name }}!</h1>
+        <p><strong>NPM:</strong> {{ npm }}</p>
+        <p><strong>Name:</strong> {{ name }}</p>
+        <p><strong>Class:</strong> {{ class }}</p>
+    </div>
 
-    <h5>NPM:</h5>
-    <p>{{ npm }}</p>
-
-    <h5>Name:</h5>
-    <p>{{ name }}</p>
-
-    <h5>Class:</h5>
-    <p>{{ class }}</p>
-
-    <hr>
-    <h2>Daftar Produk</h2>
-    <a class="btn" href="{% url 'main:add_product' %}">+ Add Product</a>
+    <div class="card">
+        <h2>Daftar Produk</h2>
+        <div class="header-actions">
+            <a class="btn" href="{% url 'main:add_product' %}">+ Add Product</a>
+            <a class="btn logout-btn" href="{% url 'main:logout' %}">Logout</a>
+            <a class="btn" href="?filter=all">Lihat Semua Produk</a>
+            <a class="btn" href="?filter=user">Produk Saya</a>
+        </div>
+        <p style="margin-top:10px; font-size: 13px; color: #666;">
+            <em>Sesi terakhir login: {{ last_login }}</em>
+        </p>
+    </div>
 
     <div class="product-list">
         {% for product in products %}
@@ -75,7 +109,7 @@
                 <h3>{{ product.name }}</h3>
                 <p><strong>Harga:</strong> Rp {{ product.price }}</p>
                 <p><strong>Kategori:</strong> {{ product.category }}</p>
-                <p>{{ product.description|truncatechars:50 }}</p>
+                <p>{{ product.description|truncatechars:80 }}</p>
                 <a class="btn" href="{% url 'main:product_detail' product.id %}">Detail</a>
             </div>
         {% empty %}
