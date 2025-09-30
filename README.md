@@ -226,3 +226,72 @@ Hasil uji coba endpoint dengan Postman bisa diakses melalui link berikut:
 Dengan langkah-langkah ini, aplikasi mendukung autentikasi pengguna, menyimpan state dengan session dan cookies, serta aman sesuai best practice Django.
 
 ---
+
+
+# Tugas 5 Desain Web menggunakan HTML, CSS dan Framework CSS
+
+## 1. Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!
+Urutan prioritas CSS selector adalah:
+1. **Inline style** (ditulis langsung pada elemen, misalnya `<p style="color:red">`) memiliki prioritas tertinggi.  
+2. **ID selector** (`#id`) lebih tinggi dibanding class.  
+3. **Class, attribute, dan pseudo-class selector** (`.class`, `[attr]`, `:hover`).  
+4. **Element selector** (`div`, `p`, `h1`) memiliki prioritas paling rendah.  
+Jika dua selector punya tingkat prioritas sama, maka yang **ditulis terakhir di CSS** yang akan dipakai (*last rule wins*).
+
+---
+
+## 2. Mengapa responsive design menjadi konsep yang penting dalam pengembangan aplikasi web? Berikan contoh aplikasi yang sudah dan belum menerapkan responsive design, serta jelaskan mengapa!
+- **Alasan penting**: Responsive design memastikan tampilan website tetap nyaman digunakan di berbagai perangkat (desktop, tablet, smartphone) tanpa harus membuat versi terpisah. Ini meningkatkan pengalaman pengguna (UX) dan mempermudah aksesibilitas.  
+
+- **Contoh sudah menerapkan**:  
+  - **Nike.com** atau **Shopee** → tampilan produk otomatis menyesuaikan layar, tombol navigasi berubah jadi hamburger menu di mobile.  
+- **Contoh belum menerapkan**:  
+  - Website lama yang hanya mendukung desktop → diakses lewat HP tampilannya mengecil, harus diperbesar secara manual, dan sulit digunakan.  
+
+---
+
+## 3. Jelaskan perbedaan antara margin, border, dan padding, serta cara untuk mengimplementasikan ketiga hal tersebut!
+- **Margin**: ruang di luar elemen, digunakan untuk memberi jarak antar elemen.  
+  ```css
+  .box { margin: 20px; }
+* Border: garis di sekeliling elemen.
+   .box { border: 2px solid black; }
+* Padding: ruang di dalam elemen, antara konten dan border.
+   .box { padding: 15px; }
+
+## 4. Jelaskan konsep flexbox dan grid layout beserta kegunaannya!
+* Flexbox: digunakan untuk mengatur layout satu dimensi (baris atau kolom). Cocok untuk navbar, daftar tombol, atau elemen yang perlu alignment fleksibel.
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+* Grid layout: digunakan untuk mengatur layout dua dimensi (baris dan kolom). Cocok untuk galeri, dashboard, atau daftar produk.
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+Flexbox dipakai untuk layout sederhana, Grid untuk layout kompleks dengan baris dan kolom.
+
+## 5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial)!
+a. Membuat fitur edit & delete produk
+* Menambahkan fungsi edit_product dan delete_product di views.py.
+* Menambahkan route di urls.py.
+* Menampilkan tombol Edit & Delete hanya untuk produk milik user yang login.
+b. Styling login & register
+* Membuat form login dan register dengan tampilan card modern.
+* Menggunakan Tailwind CSS untuk styling input, tombol, dan pesan error.
+c. Styling add/edit & detail product
+* Form tambah dan edit produk dibuat dengan desain konsisten.
+* Detail produk menampilkan gambar, nama, harga, deskripsi, dan tombol aksi.
+d. Styling daftar produk
+* Jika produk kosong → tampilkan ilustrasi dan teks “Belum ada produk”.
+* Jika ada produk → ditampilkan dengan card grid responsif (1 kolom di mobile, 2–4 kolom di desktop).
+e. Responsive navbar
+* Navbar desktop menampilkan logo dan menu horizontal.
+* Navbar mobile menampilkan hamburger menu yang bisa diklik untuk membuka navigasi.

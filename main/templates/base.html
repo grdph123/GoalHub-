@@ -1,34 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% block meta %}
-    <title>GoalHub</title>
-    {% endblock meta %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {% block meta %}
+  <title>GoalHub Store</title>
+  {% endblock meta %}
+  <script src="https://cdn.tailwindcss.com"></script>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/global.css' %}"/>
 </head>
-<body>
-    <header>
-        <nav>
-            <a href="{% url 'main:login' %}">Login</a>
-            <a href="{% url 'main:logout' %}">Logout</a>
-            <a href="{% url 'main:register' %}">Register</a>
-            {% if user.is_authenticated %}
-                | <a href="{% url 'main:logout_user' %}">Logout</a>
-            {% endif %}
-        </nav>
-        <hr>
-    </header>
+<body class="bg-gray-50">
 
-    <main>
-        {% block content %}
-        <!-- konten tiap halaman masuk di sini -->
-        {% endblock content %}
-    </main>
+  {# Navbar hanya muncul jika bukan login/register #}
+  {% if request.resolver_match.url_name != 'login' and request.resolver_match.url_name != 'register' %}
+    {% include 'navbar.html' %}
+  {% endif %}
 
-    <footer>
-        <hr>
-        <p>&copy; 2025 GoalHub</p>
+  <main class="{% if request.resolver_match.url_name != 'login' and request.resolver_match.url_name != 'register' %}pt-20{% endif %} min-h-screen">
+    {% block content %}{% endblock content %}
+  </main>
+
+  {# Footer hanya muncul jika bukan login/register #}
+  {% if request.resolver_match.url_name != 'login' and request.resolver_match.url_name != 'register' %}
+    <footer class="bg-white border-t mt-10 py-6 text-center text-gray-600">
+      &copy; 2025 GoalHub Store
     </footer>
+  {% endif %}
+
 </body>
 </html>

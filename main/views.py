@@ -13,6 +13,31 @@ import datetime
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
+#ubah 1
+def edit_product(request, id):
+    product = get_object_or_404(Product, pk=id)
+    form = ProductForm(request.POST or None, instance=product)
+
+    if form.is_valid() and request.method == 'POST':
+        form.save()
+        return redirect('main:show_main')  # balik ke halaman utama toko olahraga
+
+    context = {
+        'form': form,
+        'product': product,
+    }
+    return render(request, "main/edit_product.html", context)
+
+#ubah2
+def delete_product(request, id):
+    product = get_object_or_404(Product, pk=id)
+
+    # hanya pemilik produk yang boleh hapus
+    if product.user == request.user:
+        product.delete()
+
+    return HttpResponseRedirect(reverse('main:show_main'))
+
 def register(request):
     form = UserCreationForm()
 
@@ -103,6 +128,12 @@ def add_product(request):
 
 # Detail
 @login_required(login_url='/login')
+
 def product_detail(request, id):
-    product = get_object_or_404(Product, pk=id)
+    product = get_object_or_404(Product, id=id)
+
+    product.product_views += 1
+    product.save(update_fields=["product_views"])
+
+    
     return render(request, "main/product_detail.html", {"product": product})
