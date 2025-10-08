@@ -295,3 +295,219 @@ d. Styling daftar produk
 e. Responsive navbar
 * Navbar desktop menampilkan logo dan menu horizontal.
 * Navbar mobile menampilkan hamburger menu yang bisa diklik untuk membuka navigasi.
+
+# Tugas 6: Javascript dan AJAX
+
+## Pertanyaan dan Jawaban
+
+### 1. Apa perbedaan antara synchronous request dan asynchronous request?
+
+**Synchronous Request** adalah permintaan yang bersifat blocking, di mana browser akan menunggu hingga server memberikan respons sebelum melanjutkan eksekusi kode berikutnya. Selama proses ini, pengguna tidak dapat berinteraksi dengan halaman web karena halaman akan "freeze" atau tidak responsif.
+
+**Asynchronous Request** adalah permintaan yang bersifat non-blocking, di mana browser tidak perlu menunggu respons dari server untuk melanjutkan eksekusi kode. Pengguna tetap dapat berinteraksi dengan halaman web sementara permintaan diproses di background. Ketika respons diterima, callback function atau promise akan dijalankan untuk menangani data tersebut.
+
+**Perbedaan utama:**
+- **Blocking vs Non-blocking**: Synchronous memblokir eksekusi kode, sedangkan asynchronous tidak
+- **User Experience**: Synchronous dapat membuat halaman tidak responsif, asynchronous tetap responsif
+- **Performance**: Asynchronous lebih efisien karena dapat menangani multiple request secara bersamaan
+- **Kompleksitas**: Synchronous lebih mudah dipahami secara linear, asynchronous memerlukan pemahaman tentang callback, promises, atau async/await
+
+### 2. Bagaimana AJAX bekerja di Django (alur request–response)?
+
+AJAX (Asynchronous JavaScript and XML) di Django bekerja dengan alur sebagai berikut:
+
+1. **Client-side (JavaScript)**:
+   - User melakukan interaksi (click button, submit form, dll)
+   - JavaScript menangkap event tersebut
+   - JavaScript membuat XMLHttpRequest atau menggunakan Fetch API untuk mengirim request ke server
+   - Request dikirim ke URL endpoint Django tertentu dengan method HTTP (GET, POST, PUT, DELETE)
+
+2. **Server-side (Django)**:
+   - Django routing (urls.py) menerima request dan mengarahkan ke view yang sesuai
+   - View function/class memproses request (validasi data, operasi database, logika bisnis)
+   - View mengembalikan response dalam format JSON (biasanya menggunakan `JsonResponse`)
+   - Response dikirim kembali ke client
+
+3. **Client-side (JavaScript) - Response Handling**:
+   - JavaScript menerima response dari server
+   - Data di-parse (jika JSON)
+   - DOM dimanipulasi untuk menampilkan data/perubahan tanpa reload halaman
+   - Update UI sesuai dengan data yang diterima (tampilkan toast, refresh list, close modal, dll)
+
+**Contoh alur CRUD Product:**
+User click "Tambah Product" → Modal form muncul → User isi form → Submit
+→ JavaScript kirim POST request dengan data form → Django view proses data 
+→ Simpan ke database → Return JsonResponse → JavaScript terima response 
+→ Update tampilan product list → Tampilkan toast sukses
+
+### 3. Apa keuntungan menggunakan AJAX dibandingkan render biasa di Django?
+
+**Keuntungan AJAX:**
+
+1. **User Experience Lebih Baik**:
+   - Tidak perlu reload seluruh halaman
+   - Interaksi lebih smooth dan responsif
+   - Halaman tetap interaktif selama request diproses
+   - Dapat menampilkan loading state untuk feedback visual
+
+2. **Performance Lebih Efisien**:
+   - Hanya data yang diperlukan yang ditransfer (JSON), bukan seluruh HTML
+   - Mengurangi bandwidth usage
+   - Server load lebih ringan karena tidak perlu render template HTML lengkap
+   - Faster response time
+
+3. **Fleksibilitas Tinggi**:
+   - Dapat update bagian tertentu dari halaman secara independen
+   - Mudah implementasi fitur real-time (dengan polling atau websocket)
+   - Dapat menggabungkan data dari multiple endpoints
+   - Better separation of concerns (backend fokus ke data, frontend fokus ke presentasi)
+
+4. **Modern Web Development**:
+   - Memungkinkan pembuatan Single Page Application (SPA)
+   - Lebih mudah untuk membuat Progressive Web App (PWA)
+   - Mendukung mobile-first development
+   - Dapat di-cache untuk offline capability
+
+**Kekurangan render biasa Django:**
+- Setiap interaksi memerlukan full page reload
+- Transfer data lebih besar (HTML lengkap)
+- User experience kurang smooth
+- Tidak cocok untuk aplikasi yang membutuhkan interaksi real-time
+
+### 4. Bagaimana cara memastikan keamanan saat menggunakan AJAX untuk fitur Login dan Register di Django?
+
+**Langkah-langkah keamanan yang harus diterapkan:**
+
+1. **CSRF Protection**:
+   - Gunakan CSRF token pada setiap AJAX request yang mengubah data (POST, PUT, DELETE)
+   - Include CSRF token di header request: `'X-CSRFToken': csrftoken`
+   - Django akan memvalidasi token untuk mencegah Cross-Site Request Forgery
+
+2. **HTTPS/SSL**:
+   - Gunakan HTTPS untuk enkripsi data saat transmisi
+   - Mencegah man-in-the-middle attacks
+   - Kredensial login tidak dikirim dalam plain text
+
+3. **Input Validation dan Sanitization**:
+   - Validasi semua input di server-side (tidak hanya client-side)
+   - Gunakan Django Forms atau Serializers untuk validasi
+   - Sanitize input untuk mencegah XSS (Cross-Site Scripting)
+   - Gunakan Django's built-in escape functions
+
+4. **Authentication & Authorization**:
+   - Gunakan `@login_required` decorator untuk protected endpoints
+   - Validasi user permissions sebelum mengizinkan operasi
+   - Gunakan Django's authentication system yang sudah teruji
+   - Implement proper session management
+
+5. **Rate Limiting**:
+   - Batasi jumlah request login/register dari satu IP
+   - Mencegah brute force attacks
+   - Gunakan packages seperti `django-ratelimit`
+
+6. **Password Security**:
+   - Gunakan Django's built-in password hashing (PBKDF2)
+   - Enforce strong password policy
+   - Tidak pernah store password dalam plain text
+   - Implement password strength validator
+
+7. **Error Handling**:
+   - Jangan expose sensitive information di error messages
+   - Generic error messages untuk login failures
+   - Log security events untuk monitoring
+
+8. **Content Security Policy (CSP)**:
+   - Set proper CSP headers untuk mencegah XSS
+   - Batasi sumber JavaScript yang dapat dieksekusi
+
+**Contoh implementasi CSRF pada AJAX:**
+```javascript
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+const csrftoken = getCookie('csrftoken');
+
+fetch(url, {
+    method: 'POST',
+    headers: {
+        'X-CSRFToken': csrftoken,
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data)
+})
+
+### 5. Bagaimana AJAX mempengaruhi pengalaman pengguna (User Experience) pada website?
+
+**Dampak Positif AJAX terhadap UX:**
+
+1. **Responsiveness**:
+   - Halaman tetap responsif saat memproses request
+   - User dapat melanjutkan interaksi dengan bagian lain dari halaman
+   - Mengurangi frustasi dari waiting time
+   - Memberikan feedback instan melalui loading indicators
+
+2. **Seamless Interaction**:
+   - Tidak ada "flash" atau "blank page" saat reload
+   - Transisi antar state lebih smooth
+   - Navigasi terasa lebih natural dan fluid
+   - Pengalaman yang mirip dengan native application
+
+3. **Faster Perceived Performance**:
+   - Meskipun actual load time mungkin sama, perceived performance lebih cepat
+   - User melihat perubahan incremental, bukan menunggu full page load
+   - Dapat menampilkan skeleton loading untuk perceived speed
+   - Progressive rendering membuat konten muncul lebih cepat
+
+4. **Better Feedback**:
+   - Dapat menampilkan toast notifications untuk setiap aksi
+   - Loading states yang jelas (spinner, progress bar, skeleton)
+   - Error handling yang lebih user-friendly
+   - Success/failure feedback yang immediate
+
+5. **Data Efficiency**:
+   - Hemat bandwidth karena hanya transfer data yang diperlukan
+   - Penting untuk mobile users dengan limited data
+   - Faster loading terutama pada koneksi lambat
+   - Dapat implement progressive loading
+
+6. **Context Preservation**:
+   - User tidak kehilangan context (scroll position, form state)
+   - Tidak perlu re-navigate setelah action
+   - Multi-step forms lebih smooth
+   - Maintain application state lebih mudah
+
+7. **Modern Features**:
+   - Memungkinkan real-time updates (notifications, live search)
+   - Infinite scrolling untuk better content discovery
+   - Auto-save functionality
+   - Collaborative features (multiple users)
+
+**Potensi Dampak Negatif (jika tidak diimplementasi dengan baik):**
+
+- **Kompleksitas**: User bisa bingung jika tidak ada feedback yang jelas
+- **Accessibility**: Perlu extra effort untuk screen reader compatibility
+- **Browser History**: Back button bisa tidak berfungsi seperti expected
+- **SEO**: Content yang loaded via AJAX mungkin tidak ter-index dengan baik
+- **Error Handling**: Error bisa kurang obvious tanpa visual feedback yang jelas
+
+**Best Practices untuk UX:**
+
+- Selalu tampilkan loading indicator saat request diproses
+- Berikan feedback visual untuk setiap user action (toast, animation)
+- Handle error dengan graceful degradation
+- Implement proper empty states
+- Maintain accessibility standards (ARIA labels, keyboard navigation)
+- Consider offline functionality dengan service workers
+- Test pada berbagai kondisi network (slow 3G, offline)

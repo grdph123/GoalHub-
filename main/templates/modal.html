@@ -1,0 +1,312 @@
+<!-- Modal Create -->
+<div id="crudModal" class="hidden fixed inset-0 z-50 w-full flex items-center justify-center bg-gray-800 bg-opacity-50">
+  <div id="crudModalContent" class="bg-white rounded-lg shadow-lg w-5/6 sm:w-3/5 md:w-1/2 lg:w-2/5 xl:w-1/3 max-h-screen overflow-y-auto transition-all duration-200 opacity-0 scale-95">
+    
+    <!-- Modal header -->
+    <div class="flex items-center justify-between p-4 border-b">
+      <div>
+        <h3 class="text-xl font-semibold text-gray-900">Create New Product</h3>
+        <p class="text-sm text-gray-600 mt-1">Add your latest football gear or merchandise</p>
+      </div>
+      <button type="button" class="text-gray-400 hover:bg-gray-200 rounded-lg p-1.5" onclick="hideModal()">
+        ✕
+      </button>
+    </div>
+
+    <!-- Modal body -->
+    <div class="px-6 py-4 space-y-6 form-style">
+      <form id="productForm">
+        <!-- Product Name -->
+        <div class="mb-4">
+          <label for="name" class="block text-sm font-medium text-gray-700">Product Name</label>
+          <input type="text" id="name" name="name" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Enter product name" required>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-4">
+          <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+          <textarea id="description" name="description" rows="3" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Describe your product" required></textarea>
+        </div>
+
+        <!-- Price -->
+        <div class="mb-4">
+          <label for="price" class="block text-sm font-medium text-gray-700">Price (Rp)</label>
+          <input type="number" id="price" name="price" class="w-full border border-gray-300 rounded-md px-3 py-2" min="0" placeholder="Enter price" required>
+        </div>
+
+        <!-- Category -->
+        <div class="mb-4">
+          <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+          <select id="category" name="category" class="w-full border border-gray-300 rounded-md px-3 py-2" required>
+            <option value="">Select a category</option>
+            <option value="jersey">Jersey</option>
+            <option value="shoes">Shoes</option>
+            <option value="ball">Ball</option>
+            <option value="accessory">Accessory</option>
+            <option value="exclusive">Exclusive</option>
+            <option value="equipment">Equipment</option>
+            <option value="training">Training</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <!-- Image URL -->
+        <div class="mb-4">
+          <label for="thumbnail" class="block text-sm font-medium text-gray-700">Image URL</label>
+          <input type="url" id="thumbnail" name="thumbnail" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="https://example.com/image.jpg">
+        </div>
+
+        <!-- Featured checkbox -->
+        <div class="mb-4">
+          <div class="flex items-center">
+            <input id="is_featured" name="is_featured" type="checkbox" class="w-4 h-4 text-green-600 border-gray-300 rounded">
+            <label for="is_featured" class="ml-2 text-sm font-medium text-gray-900">Mark as Featured</label>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal footer -->
+    <div class="flex flex-col sm:flex-row gap-4 p-6 border-t border-gray-200 rounded-b">
+      <button type="button" class="order-2 sm:order-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50" onclick="hideModal()">Cancel</button>
+      <button type="submit" id="submitProduct" form="productForm" class="order-1 sm:order-2 flex-1 bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700">Save Product</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div id="editModal" class="hidden fixed inset-0 z-50 w-full flex items-center justify-center bg-gray-800 bg-opacity-50">
+  <div id="editModalContent" class="bg-white rounded-lg shadow-lg w-5/6 sm:w-3/5 md:w-1/2 lg:w-2/5 xl:w-1/3 max-h-screen overflow-y-auto transition-all duration-200 opacity-0 scale-95">
+    
+    <!-- Modal header -->
+    <div class="flex items-center justify-between p-4 border-b">
+      <div>
+        <h3 class="text-xl font-semibold text-gray-900">Edit Product</h3>
+        <p class="text-sm text-gray-600 mt-1">Update your product details</p>
+      </div>
+      <button type="button" class="text-gray-400 hover:bg-gray-200 rounded-lg p-1.5" onclick="hideEditModal()">
+        ✕
+      </button>
+    </div>
+
+    <!-- Modal body -->
+    <div class="px-6 py-4 space-y-6 form-style">
+      <form id="editProductForm">
+        <input type="hidden" id="edit_product_id" name="product_id">
+        
+        <!-- Product Name -->
+        <div class="mb-4">
+          <label for="edit_name" class="block text-sm font-medium text-gray-700">Product Name</label>
+          <input type="text" id="edit_name" name="name" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Enter product name" required>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-4">
+          <label for="edit_description" class="block text-sm font-medium text-gray-700">Description</label>
+          <textarea id="edit_description" name="description" rows="3" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Describe your product" required></textarea>
+        </div>
+
+        <!-- Price -->
+        <div class="mb-4">
+          <label for="edit_price" class="block text-sm font-medium text-gray-700">Price (Rp)</label>
+          <input type="number" id="edit_price" name="price" class="w-full border border-gray-300 rounded-md px-3 py-2" min="0" placeholder="Enter price" required>
+        </div>
+
+        <!-- Category -->
+        <div class="mb-4">
+          <label for="edit_category" class="block text-sm font-medium text-gray-700">Category</label>
+          <select id="edit_category" name="category" class="w-full border border-gray-300 rounded-md px-3 py-2" required>
+            <option value="">Select a category</option>
+            <option value="jersey">Jersey</option>
+            <option value="shoes">Shoes</option>
+            <option value="ball">Ball</option>
+            <option value="accessory">Accessory</option>
+            <option value="exclusive">Exclusive</option>
+            <option value="equipment">Equipment</option>
+            <option value="training">Training</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <!-- Image URL -->
+        <div class="mb-4">
+          <label for="edit_thumbnail" class="block text-sm font-medium text-gray-700">Image URL</label>
+          <input type="url" id="edit_thumbnail" name="thumbnail" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="https://example.com/image.jpg">
+        </div>
+
+        <!-- Featured checkbox -->
+        <div class="mb-4">
+          <div class="flex items-center">
+            <input id="edit_is_featured" name="is_featured" type="checkbox" class="w-4 h-4 text-green-600 border-gray-300 rounded">
+            <label for="edit_is_featured" class="ml-2 text-sm font-medium text-gray-900">Mark as Featured</label>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal footer -->
+    <div class="flex flex-col sm:flex-row gap-4 p-6 border-t border-gray-200 rounded-b">
+      <button type="button" class="order-2 sm:order-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50" onclick="hideEditModal()">Cancel</button>
+      <button type="submit" id="submitEditProduct" form="editProductForm" class="order-1 sm:order-2 flex-1 bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700">Update Product</button>
+    </div>
+  </div>
+</div>
+
+<!-- JS untuk buka/tutup modal CREATE -->
+<script>
+  function showModal() {
+    const modal = document.getElementById('crudModal');
+    const modalContent = document.getElementById('crudModalContent');
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+      modalContent.classList.remove('opacity-0', 'scale-95');
+      modalContent.classList.add('opacity-100', 'scale-100');
+    }, 50);
+  }
+
+  function hideModal() {
+    const modal = document.getElementById('crudModal');
+    const modalContent = document.getElementById('crudModalContent');
+    modalContent.classList.remove('opacity-100', 'scale-100');
+    modalContent.classList.add('opacity-0', 'scale-95');
+    setTimeout(() => {
+      modal.classList.add('hidden');
+    }, 150);
+  }
+
+  // Submit ADD product
+  async function addProductEntry(e) {
+    e.preventDefault();
+    
+    const form = document.querySelector('#productForm');
+    const formData = new FormData(form);
+
+    try {
+      const response = await fetch("{% url 'main:add_product_ajax' %}", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        hideModal();
+        alert('✅ Product added successfully!');
+        form.reset();
+        document.dispatchEvent(new CustomEvent('productAdded'));
+      } else {
+        alert('❌ Failed to add product.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('❌ An error occurred while adding product.');
+    }
+  }
+
+  // Event listener untuk ADD
+  const addForm = document.getElementById("productForm");
+  if (addForm) {
+    addForm.addEventListener("submit", addProductEntry);
+  }
+</script>
+
+<!-- JS untuk EDIT modal -->
+<script>
+  function showEditModal() {
+    const modal = document.getElementById('editModal');
+    const modalContent = document.getElementById('editModalContent');
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+      modalContent.classList.remove('opacity-0', 'scale-95');
+      modalContent.classList.add('opacity-100', 'scale-100');
+    }, 50);
+  }
+
+  function hideEditModal() {
+    const modal = document.getElementById('editModal');
+    const modalContent = document.getElementById('editModalContent');
+    modalContent.classList.remove('opacity-100', 'scale-100');
+    modalContent.classList.add('opacity-0', 'scale-95');
+    setTimeout(() => {
+      modal.classList.add('hidden');
+    }, 150);
+  }
+
+  // Function to load product data into edit modal
+  async function editProduct(productId) {
+    try {
+      const response = await fetch(`/json/${productId}/`);
+      const product = await response.json();
+      
+      // Fill form with product data
+      document.getElementById('edit_product_id').value = product.id;
+      document.getElementById('edit_name').value = product.name;
+      document.getElementById('edit_description').value = product.description;
+      document.getElementById('edit_price').value = product.price;
+      document.getElementById('edit_category').value = product.category;
+      document.getElementById('edit_thumbnail').value = product.thumbnail || '';
+      document.getElementById('edit_is_featured').checked = product.is_featured || false;
+      
+      showEditModal();
+    } catch (error) {
+      console.error('Error loading product:', error);
+      alert('❌ Failed to load product data');
+    }
+  }
+
+  // Submit EDIT form
+  async function submitEditProduct(e) {
+    e.preventDefault();
+    
+    const form = document.querySelector('#editProductForm');
+    const formData = new FormData(form);
+    const productId = document.getElementById('edit_product_id').value;
+
+    try {
+      const response = await fetch(`/edit-product-ajax/${productId}/`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        hideEditModal();
+        alert('✅ Product updated successfully!');
+        form.reset();
+        document.dispatchEvent(new CustomEvent('productUpdated'));
+      } else {
+        alert('❌ Failed to update product.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('❌ An error occurred while updating product.');
+    }
+  }
+
+  // Event listener untuk EDIT
+  const editForm = document.getElementById("editProductForm");
+  if (editForm) {
+    editForm.addEventListener("submit", submitEditProduct);
+  }
+
+  // Function to DELETE product with AJAX
+  async function deleteProduct(productId) {
+    if (!confirm('Yakin mau hapus produk ini?')) return;
+
+    try {
+      const response = await fetch(`/delete-product-ajax/${productId}/`, {
+        method: "POST",
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}'
+        }
+      });
+
+      if (response.ok) {
+        alert('✅ Product deleted successfully!');
+        document.dispatchEvent(new CustomEvent('productDeleted'));
+      } else {
+        alert('❌ Failed to delete product.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('❌ An error occurred.');
+    }
+  }
+</script>
