@@ -4,6 +4,9 @@ from main.views import (
     add_product, product_detail, register, login_user, logout_user,
     edit_product, delete_product
 )
+from main.views import add_product_ajax
+from main.views import edit_product_ajax, delete_product_ajax
+from main.views import register_ajax, login_ajax, logout_ajax
 
 app_name = 'main'
 
@@ -17,6 +20,13 @@ urlpatterns = [
     path('json/<uuid:id>/', show_json_by_id, name='show_json_by_id'),
 
     path('add/', add_product, name='add_product'),
+    path('create-product-ajax/', add_product_ajax, name='add_product_ajax'),
+    path('edit-product-ajax/<uuid:id>/', edit_product_ajax, name='edit_product_ajax'),
+    path('delete-product-ajax/<uuid:id>/', delete_product_ajax, name='delete_product_ajax'),
+    path('register-ajax/', register_ajax, name='register_ajax'),
+    path('login-ajax/', login_ajax, name='login_ajax'),
+    path('logout-ajax/', logout_ajax, name='logout_ajax'),
+   
 
     # pakai uuid di product detail, edit, delete
     path('product/<uuid:id>/', product_detail, name='product_detail'),

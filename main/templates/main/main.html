@@ -6,6 +6,8 @@
 <title>{{ store_name }} - Main Page</title>
 {% endblock meta %}
 
+{% include 'main/modal.html' %}
+
 {% block content %}
 <div class="bg-gray-50 w-full pt-16 min-h-screen">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -17,16 +19,18 @@
         <p class="text-lg text-gray-600">Temukan dan kelola produk olahraga terbaik di GoalHub.</p>
       </div>
     </div>
+    
+    <button onclick="showModal()" class="inline-flex items-center px-4 py-2 bg-white text-green-600 font-semibold outline outline-2 outline-green-600 rounded-md hover:bg-green-600 hover:text-white transition-colors mb-4">
+      + Add New Product (AJAX)
+    </button>
 
     <!-- Filter Section -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-10 bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
       <div class="flex space-x-3 mb-4 sm:mb-0">
-        <a href="?filter=all" 
-           class="{% if request.GET.filter == 'all' or not request.GET.filter %} bg-[#0A5C36] text-white {% else %} bg-white text-gray-800 border border-gray-300 {% endif %} px-5 py-2 rounded-full font-medium transition hover:bg-[#0A5C36] hover:text-white">
+        <a id="filter-all" class="bg-[#0A5C36] text-white px-5 py-2 rounded-full font-medium transition hover:bg-green-900">
           Semua Produk
         </a>
-        <a href="?filter=user" 
-           class="{% if request.GET.filter == 'user' %} bg-[#0A5C36] text-white {% else %} bg-white text-gray-800 border border-gray-300 {% endif %} px-5 py-2 rounded-full font-medium transition hover:bg-[#0A5C36] hover:text-white">
+        <a id="filter-my" class="bg-white text-gray-800 border border-gray-300 px-5 py-2 rounded-full font-medium transition hover:bg-[#0A5C36] hover:text-white">
           Produk Saya
         </a>
       </div>
@@ -37,78 +41,173 @@
       {% endif %}
     </div>
 
-    <!-- Product Grid / Empty State -->
-    {% if not products %}
-      <div class="bg-white rounded-xl border border-gray-200 p-16 text-center shadow-sm">
-        <div class="w-36 h-36 mx-auto mb-6">
-          <img src="{% static 'image/no-product.png' %}" alt="No products available" class="w-full h-full object-contain opacity-80">
-        </div>
-        <h3 class="text-xl font-bold text-gray-900 mb-3">Belum ada produk</h3>
-        <p class="text-gray-500 mb-8">Mulai tambahkan produk pertamamu di GoalHub sekarang.</p>
-        <a href="{% url 'main:add_product' %}" 
-           class="inline-flex items-center px-6 py-3 bg-[#0A5C36] text-white font-semibold rounded-full hover:bg-green-900 transition-transform transform hover:scale-105">
-          Tambah Produk
-        </a>
+    <!-- Loading -->
+    <div id="loading" class="bg-white rounded-xl border border-gray-200 p-12 text-center hidden">
+      <svg class="animate-spin h-8 w-8 text-green-600 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+      </svg>
+      <p class="text-gray-600 mt-3">Memuat produk...</p>
+    </div>
+
+    <!-- Error -->
+    <div id="error" class="hidden text-center text-red-600 font-semibold"></div>
+
+    <!-- Product Grid -->
+    <div id="grid" class="hidden"></div>
+
+    <!-- Empty State -->
+    <div id="empty" class="bg-white rounded-xl border border-gray-200 p-16 text-center hidden">
+      <div class="w-36 h-36 mx-auto mb-6">
+        <img src="{% static 'image/no-product.png' %}" alt="No products available" class="w-full h-full object-contain opacity-80">
       </div>
-    {% else %}
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {% for product in products %}
-          <article class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-transform transform hover:-translate-y-1 overflow-hidden flex flex-col">
-            
-            <!-- Thumbnail -->
-            {% if product.thumbnail %}
-              <img src="{{ product.thumbnail }}" alt="{{ product.name }}" 
-                   class="w-full h-56 object-cover transition-transform transform hover:scale-105">
-            {% else %}
-              <div class="w-full h-56 bg-gray-100 flex items-center justify-center text-gray-400">
-                No Image
-              </div>
-            {% endif %}
-
-            <!-- Content -->
-            <div class="p-6 flex flex-col flex-1">
-              <!-- Judul -->
-              <h3 class="text-xl font-semibold text-gray-900 mb-1">{{ product.name }}</h3>
-              
-              <!-- Meta info (waktu + views) -->
-              <div class="flex items-center text-xs text-gray-500 mb-3 space-x-3">
-                <span>{{ product.created_at|date:"d M Y" }}</span>
-                <span>•</span>
-                <span>{{ product.product_views }} views</span>
-              </div>
-
-              <!-- Harga & kategori -->
-              <p class="text-sm text-gray-700"><strong>Harga:</strong> Rp {{ product.price|intcomma }}</p>
-              <p class="text-sm text-gray-700"><strong>Kategori:</strong> {{ product.category }}</p>
-
-              <!-- Deskripsi -->
-              <p class="text-sm text-gray-500 mt-3 line-clamp-3">
-                {{ product.description|truncatechars:100 }}
-              </p>
-
-              <!-- Actions -->
-              <div class="mt-5 flex flex-wrap gap-3">
-                <a href="{% url 'main:product_detail' product.id %}" 
-                   class="px-4 py-2 bg-[#0A5C36] text-white rounded-full text-sm font-medium hover:bg-green-900 transition">
-                   Detail
-                </a>
-                {% if user.is_authenticated and product.user == user %}
-                  <a href="{% url 'main:edit_product' product.id %}" 
-                     class="px-4 py-2 bg-gray-100 text-gray-800 rounded-full text-sm font-medium hover:bg-gray-200 transition">
-                     Edit
-                  </a>
-                  <a href="{% url 'main:delete_product' product.id %}" 
-                     onclick="return confirm('Yakin mau hapus produk ini?')" 
-                     class="px-4 py-2 bg-red-500 text-white rounded-full text-sm font-medium hover:bg-red-600 transition">
-                     Delete
-                  </a>
-                {% endif %}
-              </div>
-            </div>
-          </article>
-        {% endfor %}
-      </div>
-    {% endif %}
+      <h3 class="text-xl font-bold text-gray-900 mb-3">Belum ada produk</h3>
+      <p class="text-gray-500 mb-8">Mulai tambahkan produk pertamamu di GoalHub sekarang.</p>
+      <a href="{% url 'main:add_product' %}" 
+         class="inline-flex items-center px-6 py-3 bg-[#0A5C36] text-white font-semibold rounded-full hover:bg-green-900 transition-transform transform hover:scale-105">
+        Tambah Produk
+      </a>
+    </div>
   </div>
 </div>
+
+<script>
+const PRODUCT_API_ENDPOINT = "{% url 'main:show_json' %}";
+const CURRENT_USER_ID = "{{ user.id|default_if_none:'' }}";
+
+// DOM
+const loadingEl = document.getElementById('loading');
+const errorEl = document.getElementById('error');
+const emptyEl = document.getElementById('empty');
+const gridEl = document.getElementById('grid');
+const filterAll = document.getElementById('filter-all');
+const filterMy = document.getElementById('filter-my');
+
+// STATE
+let allProducts = [];
+let activeFilter = 'all';
+
+function updateFilterButtons() {
+  if (activeFilter === 'all') {
+    filterAll.className = 'bg-[#0A5C36] text-white px-5 py-2 rounded-full font-medium transition hover:bg-green-900';
+    filterMy.className = 'bg-white text-gray-800 border border-gray-300 px-5 py-2 rounded-full font-medium transition hover:bg-[#0A5C36] hover:text-white';
+  } else {
+    filterMy.className = 'bg-[#0A5C36] text-white px-5 py-2 rounded-full font-medium transition hover:bg-green-900';
+    filterAll.className = 'bg-white text-gray-800 border border-gray-300 px-5 py-2 rounded-full font-medium transition hover:bg-[#0A5C36] hover:text-white';
+  }
+}
+
+function displaySection({ loading=false, error=false, empty=false, grid=false }) {
+  loadingEl.classList.toggle('hidden', !loading);
+  errorEl.classList.toggle('hidden', !error);
+  emptyEl.classList.toggle('hidden', !empty);
+  gridEl.classList.toggle('hidden', !grid);
+  if (grid) gridEl.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8';
+}
+
+function createProductCard(product) {
+  const article = document.createElement('article');
+  article.className = 'bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-transform transform hover:-translate-y-1 overflow-hidden flex flex-col';
+
+  const detailLink = DOMPurify.sanitize(
+    `{% url 'main:product_detail' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', product.id)
+  );
+  const editLink = DOMPurify.sanitize(
+    `{% url 'main:edit_product' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', product.id)
+  );
+  const deleteLink = DOMPurify.sanitize(
+    `{% url 'main:delete_product' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', product.id)
+  );
+
+  const name = DOMPurify.sanitize(product.name);
+  const description = DOMPurify.sanitize(product.description);
+  const category = DOMPurify.sanitize(product.category);
+  const thumbnail = DOMPurify.sanitize(product.thumbnail);
+
+  const formattedDate = new Date(product.created_at).toLocaleDateString('id-ID', {
+    year: 'numeric', month: 'short', day: 'numeric'
+  });
+
+  const imageHtml = product.thumbnail 
+    ? `<img src="${thumbnail}" alt="${name}" class="w-full h-56 object-cover">`
+    : `<div class="w-full h-56 bg-gray-100 flex items-center justify-center text-gray-400">No Image</div>`;
+
+  const canEdit = CURRENT_USER_ID && Number(CURRENT_USER_ID) === Number(product.user_id);
+  //baru
+  const editDeleteButtons = canEdit ? `
+    <button onclick="editProduct('${product.id}')" class="px-4 py-2 bg-gray-100 text-gray-800 rounded-full text-sm font-medium hover:bg-gray-200 transition">Edit</button>
+    <button onclick="deleteProduct('${product.id}')" class="px-4 py-2 bg-red-500 text-white rounded-full text-sm font-medium hover:bg-red-600 transition">Delete</button>
+  ` : '';
+
+  article.innerHTML = `
+    ${imageHtml}
+    <div class="p-6 flex flex-col flex-1">
+      <h3 class="text-xl font-semibold text-gray-900 mb-1">${name}</h3>
+      <div class="flex items-center text-xs text-gray-500 mb-3 space-x-3">
+        <span>${formattedDate}</span><span>•</span><span>${product.product_views} views</span>
+      </div>
+      <p class="text-sm text-gray-700"><strong>Harga:</strong> Rp ${Number(product.price).toLocaleString('id-ID')}</p>
+      <p class="text-sm text-gray-700"><strong>Kategori:</strong> ${category}</p>
+      <p class="text-sm text-gray-500 mt-3 line-clamp-3">${description}</p>
+      <div class="mt-5 flex flex-wrap gap-3">
+        <a href="${detailLink}" class="px-4 py-2 bg-[#0A5C36] text-white rounded-full text-sm font-medium hover:bg-green-900 transition">Detail</a>
+        ${editDeleteButtons}
+      </div>
+    </div>
+  `;
+  return article;
+}
+
+function renderProducts(products) {
+  gridEl.innerHTML = '';
+  products.forEach(p => gridEl.appendChild(createProductCard(p)));
+}
+
+function filterProducts() {
+  updateFilterButtons();
+  const filtered = activeFilter === 'all'
+    ? allProducts
+    : allProducts.filter(p => Number(p.user_id) === Number(CURRENT_USER_ID));
+
+  if (filtered.length === 0) displaySection({ empty: true });
+  else {
+    renderProducts(filtered);
+    displaySection({ grid: true });
+  }
+}
+
+async function fetchProducts() {
+  try {
+    displaySection({ loading: true });
+    const res = await fetch(PRODUCT_API_ENDPOINT);
+    if (!res.ok) throw new Error('Gagal memuat data produk');
+    const data = await res.json();
+    allProducts = data;
+    filterProducts();
+  } catch (err) {
+    console.error(err);
+    errorEl.textContent = 'Terjadi kesalahan saat memuat produk.';
+    displaySection({ error: true });
+  }
+}
+
+filterAll.addEventListener('click', () => { activeFilter = 'all'; filterProducts(); });
+filterMy.addEventListener('click', () => { activeFilter = 'my'; filterProducts(); });
+
+fetchProducts();
+
+// Refresh otomatis ketika produk baru ditambahkan dari modal
+document.addEventListener('productAdded', function() {
+  fetchProducts();
+});
+// Refresh after update
+document.addEventListener('productUpdated', function() {
+  fetchProducts();
+});
+
+// Refresh after delete
+document.addEventListener('productDeleted', function() {
+  fetchProducts();
+});
+</script>
 {% endblock content %}

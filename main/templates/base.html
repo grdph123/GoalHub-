@@ -9,12 +9,15 @@
   <script src="https://cdn.tailwindcss.com"></script>
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/global.css' %}"/>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
 </head>
 <body class="bg-gray-50">
 
   {# Navbar hanya muncul jika bukan login/register #}
   {% if request.resolver_match.url_name != 'login' and request.resolver_match.url_name != 'register' %}
     {% include 'navbar.html' %}
+    {% include 'toast.html' %}
+    {% include 'modal.html' %}
   {% endif %}
 
   <main class="{% if request.resolver_match.url_name != 'login' and request.resolver_match.url_name != 'register' %}pt-20{% endif %} min-h-screen">
